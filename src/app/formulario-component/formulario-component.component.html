@@ -1,1 +1,17 @@
-<p>formulario-component works!</p>
+<h2>Cadastro de alunos</h2>
+<label>
+    Nome:
+    <input [(ngModel)]="nome" placeholder="Digite o nome do aluno" />
+</label>
+
+<button (click)="salvarAluno()">Salvar</button>
+
+<p>Nome digitado: <strong>{{ nome }}</strong></p>
+<h3>Lista de alunos</h3>
+<ul *ngIf="listas.length > 0; else vazio">
+    <li *ngFor="let aluno of listas">{{ aluno }}</li>
+</ul>
+
+<ng-template #vazio>
+    <p>Nenhum aluno cadastrado. </p>
+</ng-template>
