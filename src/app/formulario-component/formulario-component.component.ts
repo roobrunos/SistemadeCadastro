@@ -15,17 +15,56 @@ export class FormularioComponentComponent {
   nome: string = '';
   listas: string[] = [];
 
-  constructor(private alunoService: ServicesService) { }
-  salvarAluno(){
-    if (this.nome.trim()){
-      this.alunoService.adicionarAluno(this.nome)
-      this.listas = this.alunoService.listarAlunos();
-      this.nome = ' ';
-    } else {alert('Digite um nome.')}
+  editando: boolean = false;
+  indexEditando: number | null = null;
+  consultaResultado: string | null = null;
+
+  constructor(private alunoService: ServicesService) {
+    this.atualizarLista();
+  }
+
+  salvarAluno() {
+    if (!this.nome.trim()) {
+      alert('Digite um nome.');
+      return;
+    }
+
+    if (this.editando && this.indexEditando !== null) {
+      this.alunoService.editarAluno(this.indexEditando, this.nome);
+      this.cancelarEdicao();
+    } else {
+      this.alunoService.adicionarAluno(this.nome);
+    }
+
+    this.nome = '';
+    this.atualizarLista();
+  }
+
+  consultarAluno() {
+    const resultado = this.alunoService.consultarAluno(this.nome);
+    this.consultaResultado = resultado ?? 'Aluno não encontrado.';
+  }
+
+  editarAluno(index: number) {
+    this.nome = this.listas[index];
+    this.editando = true;
+    this.indexEditando = index;
+  }
+
+  excluirAluno(index: number) {
+    this.alunoService.excluirAluno(index);
+    this.atualizarLista();
+    this.cancelarEdicao();
+  }
+
+  cancelarEdicao() {
+    this.editando = false;
+    this.indexEditando = null;
+    this.nome = '';
   }
 
   atualizarLista() {
     this.listas = this.alunoService.listarAlunos();
   }
-  
 }
+
